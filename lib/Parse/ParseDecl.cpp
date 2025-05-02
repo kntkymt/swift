@@ -4043,6 +4043,15 @@ bool Parser::parseVersionTuple(llvm::VersionTuple &Version,
 
 bool Parser::isCustomAttributeArgument() {
   BacktrackingScope backtrack(*this);
+  // if there is whitespace between attribute name and lparen, 
+  // don't treat it as arguments of the attribute.
+  // e.g.: closure { @MainActor (a, b) in ... }
+  if (Context.isSwiftVersionAtLeast(6) &&
+      Tok.isFollowingLParen() && 
+      getEndOfPreviousLoc() != Tok.getLoc()) {
+    return false;
+  }
+  
   if (skipSingle().hasCodeCompletion())
     return true;
 

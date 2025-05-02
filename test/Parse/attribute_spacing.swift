@@ -1,11 +1,18 @@
-// RUN: %target-typecheck-verify-swift
+// RUN: %target-typecheck-verify-swift -swift-version 5 -verify-additional-prefix swift5-
+// RUN: %target-typecheck-verify-swift -swift-version 6 -verify-additional-prefix swift6-
 
-@ MainActor  // expected-warning {{extraneous whitespace between '@' and attribute name; this is an error in the Swift 6 language mode}}
+// expected-swift5-warning@+2 {{extraneous whitespace between '@' and attribute name; this is an error in the Swift 6 language mode}}
+// expected-swift6-error@+1 {{extraneous whitespace between '@' and attribute name}}
+@ MainActor  
 class Foo {
-  func funcWithEscapingClosure(_ x: @ escaping () -> Int) {} // expected-warning {{extraneous whitespace between '@' and attribute name; this is an error in the Swift 6 language mode}}
+  // expected-swift5-warning@+2 {{extraneous whitespace between '@' and attribute name; this is an error in the Swift 6 language mode}}
+  // expected-swift6-error@+1 {{extraneous whitespace between '@' and attribute name}}
+  func funcWithEscapingClosure(_ x: @ escaping () -> Int) {}
 }
 
-@available (*, deprecated) // expected-warning {{extraneous whitespace between attribute name and '('; this is an error in the Swift 6 language mode}}
+// expected-swift5-warning@+2 {{extraneous whitespace between attribute name and '('; this is an error in the Swift 6 language mode}}
+// expected-swift6-error@+1 {{extraneous whitespace between attribute name and '('}}
+@available (*, deprecated)
 func deprecated() {}
 
 @propertyWrapper
@@ -16,18 +23,24 @@ struct MyPropertyWrapper {
 }
 
 struct PropertyWrapperTest {
-  @MyPropertyWrapper (param: 2)  // expected-warning {{extraneous whitespace between attribute name and '('; this is an error in the Swift 6 language mode}}
+  // expected-swift5-warning@+4 {{extraneous whitespace between attribute name and '('; this is an error in the Swift 6 language mode}}
+  // expected-swift6-error@+3 {{expected 'var' keyword in property declaration}}
+  // expected-swift6-error@+2 {{property declaration does not bind any variables}}
+  // expected-swift6-error@+1 {{expected pattern}}
+  @MyPropertyWrapper (param: 2)
   var x: Int
 }
 
-let closure1 = { @MainActor (a, b) in // expected-warning {{extraneous whitespace between attribute name and '('; this is an error in the Swift 6 language mode}}
+// expected-swift5-warning@+1 {{extraneous whitespace between attribute name and '('; this is an error in the Swift 6 language mode}}
+let closure1 = { @MainActor (a: Int, b: Int) in
 }
 
 let closure2 = { @MainActor
   (a: Int, b: Int) in
 }
 
-// expected-warning@+1{{extraneous whitespace between '@' and attribute name; this is an error in the Swift 6 language mode}}
+// expected-swift5-warning@+2{{extraneous whitespace between '@' and attribute name; this is an error in the Swift 6 language mode}}
+// expected-swift6-error@+1{{extraneous whitespace between '@' and attribute name}}
 @ 
 MainActor
 func mainActorFunc() {}
